@@ -1,5 +1,5 @@
-const rows = 30;
-const columns = 30;
+const rows = 20;
+const columns = 20;
 
 function createWorld() {
   const world = document.querySelector(".world");
