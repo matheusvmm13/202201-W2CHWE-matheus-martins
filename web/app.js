@@ -1,4 +1,3 @@
-/* eslint-disable prefer-template */
 let rows = 20;
 let columns = 20;
 const currentGeneration = [rows];
@@ -6,14 +5,14 @@ const nextGeneration = [columns];
 
 function cellClick() {
   const location = this.id.split("_"); // splits the string id into an array.
-  const row = Number(location[0]); // Get i
-  const col = Number(location[1]); // Get j
+  const rowLocation = Number(location[0]); // Get i
+  const colLocation = Number(location[1]); // Get j
 
   if (this.className === "live") {
-    currentGeneration[row][col] = false;
+    currentGeneration[rowLocation][colLocation] = 0;
     this.setAttribute("class", "dead");
   } else if (this.className === "dead") {
-    currentGeneration[row][col] = true;
+    currentGeneration[rowLocation][colLocation] = 1;
     this.setAttribute("class", "live");
   }
 }
@@ -28,7 +27,7 @@ const createWorld = () => {
     for (let j = 0; j < columns; j++) {
       const cell = document.createElement("td");
       cell.addEventListener("click", cellClick);
-      cell.setAttribute("id", i + "_" + j);
+      cell.setAttribute("id", `${i}_${j}`);
       cell.setAttribute("class", "dead");
       tr.appendChild(cell);
     }
@@ -42,16 +41,16 @@ const createGenerationArray = () => {
     currentGeneration[i] = new Array(columns);
     nextGeneration[i] = new Array(columns);
   }
-  console.log(currentGeneration); // test
 };
 
 const startGenerationArray = () => {
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < columns; j++) {
-      currentGeneration[i][j] = false;
-      nextGeneration[i][j] = false;
+      currentGeneration[i][j] = 0;
+      nextGeneration[i][j] = 0;
     }
   }
+  console.log(currentGeneration); // test
 };
 
 window.onload = () => {
@@ -60,7 +59,7 @@ window.onload = () => {
   startGenerationArray();
 };
 
-function getNeighborCount() {
+function getNeighborCount(rows, columns) {
   let neighborCount = 0;
   const numberRow = Number(rows);
   const numberColumns = Number(columns);
@@ -73,6 +72,7 @@ function getNeighborCount() {
       console.log("Entrei..."); // test
       if (currentGeneration[numberRow - 1][numberColumns] === 1) {
         neighborCount++;
+        console.log(neighborCount);
       }
     }
   }
@@ -82,6 +82,7 @@ function getNeighborCount() {
     // Check top-left neighbor
     if (currentGeneration[numberRow - 1][numberColumns - 1] === 1) {
       neighborCount++;
+      console.log(neighborCount);
     }
   }
 
@@ -90,6 +91,7 @@ function getNeighborCount() {
     // Check top-righ neighbor
     if (currentGeneration[numberRow - 1][numberColumns + 1] === 1) {
       neighborCount++;
+      console.log(neighborCount);
     }
   }
 
@@ -106,6 +108,7 @@ function getNeighborCount() {
     // Check righ neighbor
     if (currentGeneration[numberRow][numberColumns + 1] === 1) {
       neighborCount++;
+      console.log(neighborCount);
     }
   }
 
@@ -114,6 +117,7 @@ function getNeighborCount() {
     // Check bottom-left neighbor
     if (currentGeneration[numberRow + 1][numberColumns - 1] === 1) {
       neighborCount++;
+      console.log(neighborCount);
     }
   }
 
@@ -121,6 +125,7 @@ function getNeighborCount() {
     // Check bottom-righ neighbor
     if (currentGeneration[numberRow + 1][numberColumns + 1] === 1) {
       neighborCount++;
+      console.log(neighborCount);
     }
   }
 
@@ -129,20 +134,18 @@ function getNeighborCount() {
     // Check bottom neighbor
     if (currentGeneration[numberRow + 1][numberColumns] === 1) {
       neighborCount++;
+      console.log(neighborCount);
     }
   }
-
   return neighborCount;
 }
-
-// getNeighborCount();
 
 function createNextGeneration() {
   const neighbor = getNeighborCount(rows, columns);
 
   for (rows in currentGeneration) {
     if (Object.hasOwnProperty.call(currentGeneration, rows)) {
-      for (columns in currentGeneration) {
+      for (columns in currentGeneration[rows]) {
         if (Object.hasOwnProperty.call(currentGeneration, columns)) {
           if (currentGeneration[rows][columns] === 1) {
             // It's alive
@@ -170,8 +173,6 @@ function createNextGeneration() {
   }
 }
 
-// createNextGeneration();
-
 function updateCurrentGeneration() {
   for (rows in currentGeneration) {
     if (Object.hasOwnProperty.call(currentGeneration, rows)) {
@@ -186,23 +187,24 @@ function updateCurrentGeneration() {
   console.log(nextGeneration);
 }
 
-// updateCurrentGeneration();
-
 function updateWorld() {
-  const cell = "";
+  let clickedCell = "";
+
   for (rows in currentGeneration) {
     if (Object.hasOwnProperty.call(currentGeneration, rows)) {
-      document.getElementById(`${rows}_${columns}`);
-      if (currentGeneration[rows][columns] === 0) {
-        cell.setAttribute("id", "dead");
-      } else {
-        cell.setAttribute("class", "live");
+      for (columns in currentGeneration[rows]) {
+        if (Object.hasOwnProperty.call(currentGeneration, columns)) {
+          clickedCell = document.getElementById(`${rows}_${columns}`);
+          if (currentGeneration[rows][columns] === 0) {
+            clickedCell.setAttribute("class", "dead");
+          } else {
+            clickedCell.setAttribute("class", "live");
+          }
+        }
       }
     }
   }
 }
-
-// updateWorld();
 
 function evolve() {
   createNextGeneration(); // Apply the rules
