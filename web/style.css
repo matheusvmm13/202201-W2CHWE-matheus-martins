@@ -13,3 +13,10 @@ tr {
   width: 12px;
   height: 12px;
 }
+
+td.dead {
+  background-color: transparent;
+}
+td.live {
+  background-color: blue;
+}
