@@ -1,7 +1,7 @@
 const rows = 20;
 const columns = 20;
 
-function createWorld() {
+const createWorld = () => {
   const world = document.querySelector(".world");
   const table = document.createElement("table");
   table.setAttribute("class", "--worldgrid");
@@ -15,8 +15,31 @@ function createWorld() {
     table.appendChild(tr);
   }
   world.appendChild(table);
-}
+};
 
 window.onload = () => {
   createWorld();
 };
+
+const currentGeneration = [rows];
+const nextGeneration = [columns];
+
+const createGenerationArray = () => {
+  for (let i = 0; i < rows; i++) {
+    currentGeneration[i] = new Array(columns);
+    nextGeneration[i] = new Array(columns);
+  }
+  console.log(currentGeneration);
+};
+
+const startGenerationArray = () => {
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < columns; j++) {
+      currentGeneration[i][j] = 0;
+      nextGeneration[i][j] = 0;
+    }
+  }
+};
+
+createGenerationArray();
+startGenerationArray();
