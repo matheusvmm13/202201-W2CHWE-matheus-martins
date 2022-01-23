@@ -2,6 +2,7 @@ let rows = 20;
 let columns = 20;
 const currentGeneration = [rows];
 const nextGeneration = [columns];
+let neighborCount = 0;
 
 function cellClick() {
   const location = this.id.split("_"); // splits the string id into an array.
@@ -60,20 +61,14 @@ window.onload = () => {
 };
 
 function getNeighborCount(rows, columns) {
-  let neighborCount = 0;
   const numberRow = Number(rows);
   const numberColumns = Number(columns);
 
   // Check we're not in the 1st row
   if (numberRow - 1 >= 0) {
-    // not the first row
-    if (numberColumns - 1 >= 0) {
-      // Check top neighbor
-      console.log("Entrei..."); // test
-      if (currentGeneration[numberRow - 1][numberColumns] === 1) {
-        neighborCount++;
-        console.log(neighborCount);
-      }
+    if (currentGeneration[numberRow - 1][numberColumns] === 1) {
+      neighborCount++;
+      console.log(`neighbor count: ${neighborCount}`);
     }
   }
 
@@ -82,7 +77,7 @@ function getNeighborCount(rows, columns) {
     // Check top-left neighbor
     if (currentGeneration[numberRow - 1][numberColumns - 1] === 1) {
       neighborCount++;
-      console.log(neighborCount);
+      console.log(`neighbor count: ${neighborCount}`);
     }
   }
 
@@ -91,7 +86,7 @@ function getNeighborCount(rows, columns) {
     // Check top-righ neighbor
     if (currentGeneration[numberRow - 1][numberColumns + 1] === 1) {
       neighborCount++;
-      console.log(neighborCount);
+      console.log(`neighbor count: ${neighborCount}`);
     }
   }
 
@@ -108,7 +103,7 @@ function getNeighborCount(rows, columns) {
     // Check righ neighbor
     if (currentGeneration[numberRow][numberColumns + 1] === 1) {
       neighborCount++;
-      console.log(neighborCount);
+      console.log(`neighbor count: ${neighborCount}`);
     }
   }
 
@@ -117,7 +112,7 @@ function getNeighborCount(rows, columns) {
     // Check bottom-left neighbor
     if (currentGeneration[numberRow + 1][numberColumns - 1] === 1) {
       neighborCount++;
-      console.log(neighborCount);
+      console.log(`neighbor count: ${neighborCount}`);
     }
   }
 
@@ -125,7 +120,7 @@ function getNeighborCount(rows, columns) {
     // Check bottom-righ neighbor
     if (currentGeneration[numberRow + 1][numberColumns + 1] === 1) {
       neighborCount++;
-      console.log(neighborCount);
+      console.log(`neighbor count: ${neighborCount}`);
     }
   }
 
@@ -134,19 +129,19 @@ function getNeighborCount(rows, columns) {
     // Check bottom neighbor
     if (currentGeneration[numberRow + 1][numberColumns] === 1) {
       neighborCount++;
-      console.log(neighborCount);
+      console.log(`neighbor count: ${neighborCount}`);
     }
   }
   return neighborCount;
 }
 
 function createNextGeneration() {
-  const neighbor = getNeighborCount(rows, columns);
-
   for (rows in currentGeneration) {
     if (Object.hasOwnProperty.call(currentGeneration, rows)) {
       for (columns in currentGeneration[rows]) {
         if (Object.hasOwnProperty.call(currentGeneration, columns)) {
+          const neighbor = getNeighborCount(rows, columns);
+
           if (currentGeneration[rows][columns] === 1) {
             // It's alive
             if (neighbor === 2 || neighbor === 3) {
@@ -161,7 +156,7 @@ function createNextGeneration() {
             }
           }
 
-          if (nextGeneration[rows][columns] === 0) {
+          if (currentGeneration[rows][columns] === 0) {
             // It's dead
             if (neighbor === 3) {
               nextGeneration[rows][columns] = 1; // Any dead cell with exactly 3 live neighbours, becomes a live cell.
@@ -176,15 +171,14 @@ function createNextGeneration() {
 function updateCurrentGeneration() {
   for (rows in currentGeneration) {
     if (Object.hasOwnProperty.call(currentGeneration, rows)) {
-      for (columns in currentGeneration) {
+      for (columns in currentGeneration[rows]) {
         if (Object.hasOwnProperty.call(currentGeneration, columns)) {
           currentGeneration[rows][columns] = nextGeneration[rows][columns];
+          // nextGeneration[rows][columns] = 0;
         }
       }
     }
   }
-  nextGeneration[rows][columns] = 0;
-  console.log(nextGeneration);
 }
 
 function updateWorld() {
@@ -194,8 +188,8 @@ function updateWorld() {
     if (Object.hasOwnProperty.call(currentGeneration, rows)) {
       for (columns in currentGeneration[rows]) {
         if (Object.hasOwnProperty.call(currentGeneration, columns)) {
-          clickedCell = document.getElementById(`${rows}_${columns}`);
           if (currentGeneration[rows][columns] === 0) {
+            clickedCell = document.getElementById(`${rows}_${columns}`);
             clickedCell.setAttribute("class", "dead");
           } else {
             clickedCell.setAttribute("class", "live");
