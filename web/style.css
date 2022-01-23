@@ -15,7 +15,7 @@ tr {
 }
 
 td.dead {
-  background-color: transparent;
+  background-color: lightyellow;
 }
 td.live {
   background-color: blue;

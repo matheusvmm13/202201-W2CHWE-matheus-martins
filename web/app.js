@@ -1,8 +1,7 @@
-let rows = 20;
-let columns = 20;
+let rows = 10;
+let columns = 10;
 const currentGeneration = [rows];
 const nextGeneration = [columns];
-let neighborCount = 0;
 
 function cellClick() {
   const location = this.id.split("_"); // splits the string id into an array.
@@ -16,6 +15,7 @@ function cellClick() {
     currentGeneration[rowLocation][colLocation] = 1;
     this.setAttribute("class", "live");
   }
+  return currentGeneration;
 }
 
 const createWorld = () => {
@@ -51,7 +51,7 @@ const startGenerationArray = () => {
       nextGeneration[i][j] = 0;
     }
   }
-  console.log(currentGeneration); // test
+  console.log(`current generation: ${currentGeneration}`); // test
 };
 
 window.onload = () => {
@@ -60,79 +60,78 @@ window.onload = () => {
   startGenerationArray();
 };
 
-function getNeighborCount(rows, columns) {
-  const numberRow = Number(rows);
-  const numberColumns = Number(columns);
+function getNeighborCount(i, j) {
+  let neighborCount = 0;
+  const numberRow = Number(i);
+  const numberColumns = Number(j);
 
-  // Check we're not in the 1st row
   if (numberRow - 1 >= 0) {
-    if (currentGeneration[numberRow - 1][numberColumns] === 1) {
-      neighborCount++;
-      console.log(`neighbor count: ${neighborCount}`);
-    }
+    if (currentGeneration[numberRow - 1][numberColumns] === 1) neighborCount++;
   }
-
-  // not in the first cell
   if (numberRow - 1 >= 0 && numberColumns - 1 >= 0) {
-    // Check top-left neighbor
-    if (currentGeneration[numberRow - 1][numberColumns - 1] === 1) {
+    if (currentGeneration[numberRow - 1][numberColumns - 1] === 1)
       neighborCount++;
-      console.log(`neighbor count: ${neighborCount}`);
-    }
   }
 
-  // not on the first row last column
   if (numberRow - 1 >= 0 && numberColumns + 1 < columns) {
-    // Check top-righ neighbor
-    if (currentGeneration[numberRow - 1][numberColumns + 1] === 1) {
+    if (currentGeneration[numberRow - 1][numberColumns + 1] === 1)
       neighborCount++;
-      console.log(`neighbor count: ${neighborCount}`);
-    }
   }
 
-  /* // not the first column
   if (numberColumns - 1 >= 0) {
-    // Check left neighbor
-    if (currentGeneration[numberRow][numberColumns - 1] === 1) {
-      neighborCount++;
-    }
-  } */
-
-  // not the last column
-  if (numberColumns + 1 < columns) {
-    // Check righ neighbor
-    if (currentGeneration[numberRow][numberColumns + 1] === 1) {
-      neighborCount++;
-      console.log(`neighbor count: ${neighborCount}`);
-    }
+    if (currentGeneration[numberRow][numberColumns - 1] === 1) neighborCount++;
   }
 
-  // not on the bottom left corner
+  if (numberColumns + 1 < columns) {
+    if (currentGeneration[numberRow][numberColumns + 1] === 1) neighborCount++;
+  }
+
   if (numberRow + 1 < rows && numberColumns - 1 >= 0) {
-    // Check bottom-left neighbor
-    if (currentGeneration[numberRow + 1][numberColumns - 1] === 1) {
+    if (currentGeneration[numberRow + 1][numberColumns - 1] === 1)
       neighborCount++;
-      console.log(`neighbor count: ${neighborCount}`);
-    }
   }
 
   if (numberRow + 1 < rows && numberColumns + 1 < columns) {
-    // Check bottom-righ neighbor
-    if (currentGeneration[numberRow + 1][numberColumns + 1] === 1) {
+    if (currentGeneration[numberRow + 1][numberColumns + 1] === 1)
       neighborCount++;
-      console.log(`neighbor count: ${neighborCount}`);
-    }
   }
 
-  // not on the last row
   if (numberRow + 1 < rows) {
-    // Check bottom neighbor
-    if (currentGeneration[numberRow + 1][numberColumns] === 1) {
-      neighborCount++;
-      console.log(`neighbor count: ${neighborCount}`);
-    }
+    if (currentGeneration[numberRow + 1][numberColumns] === 1) neighborCount++;
   }
   return neighborCount;
+}
+
+function ArrayNeighborRun() {
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < columns; j++) {
+      const neighborsNew = getNeighborCount(i, j);
+      console.log(neighborsNew);
+
+      const cell = document.getElementById(`${i}_${j}`);
+
+      if (currentGeneration[i][j] === 1) {
+        if (neighborsNew === 2 || neighborsNew === 3) {
+          nextGeneration[i][j] = 1;
+        } else if (neighborsNew < 2) {
+          nextGeneration[i][j] = 0;
+          cell.classList.remove("live");
+          cell.classList.add("dead");
+        } else if (neighborsNew > 3) {
+          nextGeneration[i][j] = 0;
+          cell.classList.remove("live");
+          cell.classList.add("dead");
+        }
+      }
+      if (currentGeneration[i][j] === 0) {
+        if (neighborsNew === 3) {
+          nextGeneration[i][j] = 1;
+          cell.classList.remove("dead");
+          cell.classList.add("live");
+        }
+      }
+    }
+  }
 }
 
 function createNextGeneration() {
@@ -147,8 +146,10 @@ function createNextGeneration() {
             if (neighbor === 2 || neighbor === 3) {
               // Any live cell with 2 or 3 live neighbours, lives on to the next generation.
               nextGeneration[rows][columns] = 1;
+              console.log("I can live");
             } else if (neighbor < 2) {
               // Any live cell with fewer than 2 live neighbours, dies.
+              console.log("I have few neighbors, I died");
               nextGeneration[rows][columns] = 0;
             } else if (neighbor > 3) {
               // Any live cell with more than 3 live neighbours, dies.
@@ -166,6 +167,8 @@ function createNextGeneration() {
       }
     }
   }
+  console.log(`this is the next-generation: ${nextGeneration}`);
+  return nextGeneration;
 }
 
 function updateCurrentGeneration() {
@@ -173,26 +176,30 @@ function updateCurrentGeneration() {
     if (Object.hasOwnProperty.call(currentGeneration, rows)) {
       for (columns in currentGeneration[rows]) {
         if (Object.hasOwnProperty.call(currentGeneration, columns)) {
+          // nextGeneration[rows][columns] = currentGeneration[rows][columns];
           currentGeneration[rows][columns] = nextGeneration[rows][columns];
-          // nextGeneration[rows][columns] = 0;
+          nextGeneration[rows][columns] = 0;
         }
       }
     }
   }
+  console.table(`new current generation${currentGeneration}`);
+  return currentGeneration;
 }
 
 function updateWorld() {
-  let clickedCell = "";
+  let cell = "";
 
   for (rows in currentGeneration) {
     if (Object.hasOwnProperty.call(currentGeneration, rows)) {
       for (columns in currentGeneration[rows]) {
         if (Object.hasOwnProperty.call(currentGeneration, columns)) {
           if (currentGeneration[rows][columns] === 0) {
-            clickedCell = document.getElementById(`${rows}_${columns}`);
-            clickedCell.setAttribute("class", "dead");
+            cell = document.getElementById(`${rows}_${columns}`);
+            cell.setAttribute("class", "dead");
           } else {
-            clickedCell.setAttribute("class", "live");
+            // cell = document.getElementById(`${rows}_${columns}`);
+            cell.setAttribute("class", "live");
           }
         }
       }
@@ -200,8 +207,27 @@ function updateWorld() {
   }
 }
 
+function TimeOut() {
+  setTimeout(() => {
+    ArrayNeighborRun();
+    createNextGeneration(); // Apply the rules
+    updateCurrentGeneration(); // Set Current values from new generation
+    updateWorld();
+    TimeOut();
+  }, 1000);
+}
+
 function evolve() {
+  ArrayNeighborRun();
   createNextGeneration(); // Apply the rules
   updateCurrentGeneration(); // Set Current values from new generation
   updateWorld(); // Update the world view
+  TimeOut();
 }
+
+function startEvolution() {
+  const evolveButton = document.querySelector(".evolve-button");
+  evolveButton.addEventListener("click", evolve);
+}
+
+startEvolution();
