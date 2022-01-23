@@ -1,5 +1,5 @@
-let rows = 10;
-let columns = 10;
+let rows = 15;
+let columns = 15;
 const currentGeneration = [rows];
 const nextGeneration = [columns];
 
