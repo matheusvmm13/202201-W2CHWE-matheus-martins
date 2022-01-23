@@ -1,15 +1,69 @@
-.world {
+body {
+  background: rgb(0, 0, 0);
+  background: linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(42, 40, 41, 1) 69%
+  );
+}
+
+h1 {
+  font-family: "Press Start 2P", "Open Sans", monospace;
+  color: #87cea5;
+  font-size: 72;
+  padding: 20px 0;
+}
+
+h2 {
+  font-family: "Roboto Mono", monospace;
+  color: #dadada;
+  font-size: 16px;
+  margin: 0px;
+  padding: 10px 0;
+}
+
+.main-container__controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 10px;
+}
+
+.main-container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 }
-table {
-  background-color: rgb(245, 245, 245);
+
+.world {
+  padding: 20px;
 }
+
 td,
 tr {
-  border: 1px solid rgb(27, 27, 27);
-  border-radius: 3px;
-  width: 12px;
-  height: 12px;
+  width: 25px;
+  height: 25px;
+}
+
+td.dead {
+  background-color: #4f3f30;
+}
+td.live {
+  background-color: #adac8d;
+}
+td.live::after {
+  content: "🌱";
+}
+
+.evolve-button {
+  background-color: #332f35;
+  color: #dadada;
+  font-family: "Press Start 2P", "Open Sans", monospace;
+  padding: 15px 65px;
+  margin-top: 30px;
+  text-transform: uppercase;
+}
+
+.evolve-button:hover {
+  background-color: #363636;
 }
