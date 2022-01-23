@@ -4,9 +4,9 @@ const currentGeneration = [rows];
 const nextGeneration = [columns];
 
 function cellClick() {
-  const location = this.id.split("_"); // splits the string id into an array.
-  const rowLocation = Number(location[0]); // Get i
-  const colLocation = Number(location[1]); // Get j
+  const location = this.id.split("_");
+  const rowLocation = Number(location[0]);
+  const colLocation = Number(location[1]);
 
   if (this.className === "live") {
     currentGeneration[rowLocation][colLocation] = 0;
@@ -51,7 +51,6 @@ const startGenerationArray = () => {
       nextGeneration[i][j] = 0;
     }
   }
-  console.log(`current generation: ${currentGeneration}`); // test
 };
 
 window.onload = () => {
@@ -105,26 +104,24 @@ function getNeighborCount(i, j) {
 function ArrayNeighborRun() {
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < columns; j++) {
-      const neighborsNew = getNeighborCount(i, j);
-      console.log(neighborsNew);
-
+      const neighborCells = getNeighborCount(i, j);
       const cell = document.getElementById(`${i}_${j}`);
 
       if (currentGeneration[i][j] === 1) {
-        if (neighborsNew === 2 || neighborsNew === 3) {
+        if (neighborCells === 2 || neighborCells === 3) {
           nextGeneration[i][j] = 1;
-        } else if (neighborsNew < 2) {
+        } else if (neighborCells < 2) {
           nextGeneration[i][j] = 0;
           cell.classList.remove("live");
           cell.classList.add("dead");
-        } else if (neighborsNew > 3) {
+        } else if (neighborCells > 3) {
           nextGeneration[i][j] = 0;
           cell.classList.remove("live");
           cell.classList.add("dead");
         }
       }
       if (currentGeneration[i][j] === 0) {
-        if (neighborsNew === 3) {
+        if (neighborCells === 3) {
           nextGeneration[i][j] = 1;
           cell.classList.remove("dead");
           cell.classList.add("live");
@@ -142,17 +139,11 @@ function createNextGeneration() {
           const neighbor = getNeighborCount(rows, columns);
 
           if (currentGeneration[rows][columns] === 1) {
-            // It's alive
             if (neighbor === 2 || neighbor === 3) {
-              // Any live cell with 2 or 3 live neighbours, lives on to the next generation.
               nextGeneration[rows][columns] = 1;
-              console.log("I can live");
             } else if (neighbor < 2) {
-              // Any live cell with fewer than 2 live neighbours, dies.
-              console.log("I have few neighbors, I died");
               nextGeneration[rows][columns] = 0;
             } else if (neighbor > 3) {
-              // Any live cell with more than 3 live neighbours, dies.
               nextGeneration[rows][columns] = 0;
             }
           }
@@ -160,14 +151,13 @@ function createNextGeneration() {
           if (currentGeneration[rows][columns] === 0) {
             // It's dead
             if (neighbor === 3) {
-              nextGeneration[rows][columns] = 1; // Any dead cell with exactly 3 live neighbours, becomes a live cell.
+              nextGeneration[rows][columns] = 1;
             }
           }
         }
       }
     }
   }
-  console.log(`this is the next-generation: ${nextGeneration}`);
   return nextGeneration;
 }
 
@@ -176,14 +166,12 @@ function updateCurrentGeneration() {
     if (Object.hasOwnProperty.call(currentGeneration, rows)) {
       for (columns in currentGeneration[rows]) {
         if (Object.hasOwnProperty.call(currentGeneration, columns)) {
-          // nextGeneration[rows][columns] = currentGeneration[rows][columns];
           currentGeneration[rows][columns] = nextGeneration[rows][columns];
           nextGeneration[rows][columns] = 0;
         }
       }
     }
   }
-  console.table(`new current generation${currentGeneration}`);
   return currentGeneration;
 }
 
@@ -210,8 +198,8 @@ function updateWorld() {
 function TimeOut() {
   setTimeout(() => {
     ArrayNeighborRun();
-    createNextGeneration(); // Apply the rules
-    updateCurrentGeneration(); // Set Current values from new generation
+    createNextGeneration();
+    updateCurrentGeneration();
     updateWorld();
     TimeOut();
   }, 1000);
@@ -219,9 +207,9 @@ function TimeOut() {
 
 function evolve() {
   ArrayNeighborRun();
-  createNextGeneration(); // Apply the rules
-  updateCurrentGeneration(); // Set Current values from new generation
-  updateWorld(); // Update the world view
+  createNextGeneration();
+  updateCurrentGeneration();
+  updateWorld();
   TimeOut();
 }
 
